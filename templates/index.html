@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recipe Creator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<h1>🍳 Recipe Creator</h1>
+<div class="form">
+    <input id="name" placeholder="Recipe Name">
+    <textarea id="ingredients" placeholder="Ingredients"></textarea>
+    <textarea id="instructions" placeholder="Instructions"></textarea>
+    <button onclick="addRecipe()">Add Recipe</button>
+</div>
+<div id="recipeGrid" class="grid"></div>
+<div id="editModal" class="modal">
+  <div class="modal-content">
+
+    <h2>Edit Recipe</h2>
+
+    <input id="editName" placeholder="Recipe Name">
+
+    <textarea id="editIngredients" placeholder="Ingredients"></textarea>
+
+    <textarea id="editInstructions" placeholder="Instructions"></textarea>
+
+    <div class="modal-buttons">
+      <button onclick="saveEdit()">Save</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script src="/static/script.js"></script>
+</body>
+</html>

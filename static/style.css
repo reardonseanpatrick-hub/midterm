@@ -1,0 +1,107 @@
+body {
+    font-family: Arial;
+    margin: 40px;
+}
+
+h1 {
+    color: darkred;
+}
+
+input, textarea {
+    display: block;
+    margin: 10px 0;
+    padding: 8px;body{
+    font-family: Arial;
+    background:#f4f4f4;
+    padding:30px;
+}
+
+h1{
+    text-align:center;
+}
+
+.form{
+    width:400px;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+input, textarea{
+    padding:10px;
+}
+
+button{
+    padding:10px;
+    background:#4CAF50;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.grid{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+
+.card h3{
+    margin-top:0;
+}
+
+.buttons{
+    margin-top:10px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.delete{
+    background:red;
+}
+
+.edit{
+    background:orange;
+}
+
+}
+
+button {
+    background: darkred;
+    color: white;
+    border: none;
+    padding: 10px;
+}
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+}
+
+.modal-content{
+    background:white;
+    width:400px;
+    margin:100px auto;
+    padding:20px;
+    border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.modal-buttons{
+    display:flex;
+    justify-content:space-between;
+}
