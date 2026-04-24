@@ -3,33 +3,58 @@
 <head>
     <title>Recipe Creator</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Small style tweak for the top bar */
+        .auth-container {
+            text-align: right; 
+            padding: 15px; 
+            background: #2c3e50; 
+            color: white;
+            margin-bottom: 20px;
+        }
+        .auth-container button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
+
+<div class="auth-container">
+    <span id="userGreeting"></span>
+    <button onclick="handleLogin()">Login</button>
+    <button onclick="handleRegister()">Register</button>
+</div>
+
 <h1>🍳 Recipe Creator</h1>
+
 <div class="form">
     <input id="name" placeholder="Recipe Name">
     <textarea id="ingredients" placeholder="Ingredients"></textarea>
     <textarea id="instructions" placeholder="Instructions"></textarea>
     <button onclick="addRecipe()">Add Recipe</button>
 </div>
+
 <div id="recipeGrid" class="grid"></div>
+
 <div id="editModal" class="modal">
   <div class="modal-content">
-
     <h2>Edit Recipe</h2>
-
     <input id="editName" placeholder="Recipe Name">
-
     <textarea id="editIngredients" placeholder="Ingredients"></textarea>
-
     <textarea id="editInstructions" placeholder="Instructions"></textarea>
-
     <div class="modal-buttons">
       <button onclick="saveEdit()">Save</button>
       <button onclick="closeModal()">Cancel</button>
     </div>
   </div>
 </div>
+
 <script src="/static/script.js"></script>
 </body>
 </html>
