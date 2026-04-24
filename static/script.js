@@ -1,113 +1,150 @@
-const API = "/recipes"
+const API = "/recipes";
 
-let editingIndex = null
-let currentRecipes = []
+let editingId = null; 
+let currentRecipes = [];
 
-async function loadRecipes(){
+// --- LOGIN & REGISTRATION LOGIC ---
+async function handleRegister() {
+    const username = prompt("Enter a new username:");
+    const password = prompt("Enter a new password:");
 
-    const res = await fetch(API)
-    const recipes = await res.json()
+    if (!username || !password) return alert("Username and password required");
 
-    currentRecipes = recipes
+    const user = { username, password };
 
-    const grid = document.getElementById("recipeGrid")
-    grid.innerHTML = ""
+    try {
+        const res = await fetch("/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        });
 
-    recipes.forEach((recipe, index) => {
+        const data = await res.json();
+        alert(data.detail || data.message);
+    } catch (err) {
+        console.error("Register Error:", err);
+        alert("Server error. Check your Python terminal!");
+    }
+}
 
-        const card = document.createElement("div")
-        card.className = "card"
+async function handleLogin() {
+    const username = prompt("Username:");
+    const password = prompt("Password:"); // Fixed the double assignment typo here
+
+    if (!username || !password) return;
+
+    const user = { username, password };
+
+    try {
+        const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert(`Welcome, ${data.username}!`);
+            const greeting = document.getElementById("userGreeting");
+            if (greeting) greeting.innerText = `Logged in as: ${data.username} | `;
+            
+            // OPTIONAL: Show the form only after login
+            document.querySelector(".form").style.opacity = "1";
+        } else {
+            alert(data.detail || "Login failed");
+        }
+    } catch (err) {
+        console.error("Login Error:", err);
+        alert("Invalid response from server. Make sure MongoDB is running.");
+    }
+}
+
+// --- RECIPE LOGIC ---
+async function loadRecipes() {
+    const res = await fetch(API);
+    const recipes = await res.json();
+    currentRecipes = recipes;
+
+    const grid = document.getElementById("recipeGrid");
+    grid.innerHTML = "";
+
+    recipes.forEach((recipe) => {
+        const card = document.createElement("div");
+        card.className = "card";
 
         card.innerHTML = `
             <h3>${recipe.name}</h3>
             <p><b>Ingredients:</b><br>${recipe.ingredients}</p>
             <p><b>Instructions:</b><br>${recipe.instructions}</p>
-
             <div class="buttons">
-                <button class="edit" onclick="openEdit(${index})">Edit</button>
-                <button class="delete" onclick="deleteRecipe(${index})">Delete</button>
+                <button class="edit" onclick="openEdit('${recipe._id}')">Edit</button>
+                <button class="delete" onclick="deleteRecipe('${recipe._id}')">Delete</button>
             </div>
-        `
-
-        grid.appendChild(card)
-    })
+        `;
+        grid.appendChild(card);
+    });
 }
 
-
-async function addRecipe(){
-
+async function addRecipe() {
     const recipe = {
         name: document.getElementById("name").value,
         ingredients: document.getElementById("ingredients").value,
         instructions: document.getElementById("instructions").value
+    };
+
+    if (!recipe.name) return alert("Please enter a recipe name");
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recipe)
+    });
+
+    document.getElementById("name").value = "";
+    document.getElementById("ingredients").value = "";
+    document.getElementById("instructions").value = "";
+
+    loadRecipes();
+}
+
+async function deleteRecipe(id) {
+    if (confirm("Are you sure you want to delete this recipe?")) {
+        await fetch(`${API}/${id}`, { method: "DELETE" });
+        loadRecipes();
     }
-
-    await fetch(API,{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(recipe)
-    })
-
-    document.getElementById("name").value = ""
-    document.getElementById("ingredients").value = ""
-    document.getElementById("instructions").value = ""
-
-    loadRecipes()
 }
 
+function openEdit(id) {
+    editingId = id;
+    const recipe = currentRecipes.find(r => r._id === id);
 
-async function deleteRecipe(index){
+    document.getElementById("editName").value = recipe.name;
+    document.getElementById("editIngredients").value = recipe.ingredients;
+    document.getElementById("editInstructions").value = recipe.instructions;
 
-    await fetch(`${API}/${index}`,{
-        method:"DELETE"
-    })
-
-    loadRecipes()
+    document.getElementById("editModal").style.display = "block";
 }
 
-
-function openEdit(index){
-
-    editingIndex = index
-
-    const recipe = currentRecipes[index]
-
-    document.getElementById("editName").value = recipe.name
-    document.getElementById("editIngredients").value = recipe.ingredients
-    document.getElementById("editInstructions").value = recipe.instructions
-
-    document.getElementById("editModal").style.display = "block"
-}
-
-
-function closeModal(){
-    document.getElementById("editModal").style.display = "none"
-}
-
-
-async function saveEdit(){
-
-    const original = currentRecipes[editingIndex]
-
+async function saveEdit() {
     const recipe = {
-        name: document.getElementById("editName").value || original.name,
-        ingredients: document.getElementById("editIngredients").value || original.ingredients,
-        instructions: document.getElementById("editInstructions").value || original.instructions
-    }
+        name: document.getElementById("editName").value,
+        ingredients: document.getElementById("editIngredients").value,
+        instructions: document.getElementById("editInstructions").value
+    };
 
-    await fetch(`${API}/${editingIndex}`,{
-        method:"PUT",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(recipe)
-    })
+    await fetch(`${API}/${editingId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recipe)
+    });
 
-    closeModal()
-    loadRecipes()
+    closeModal();
+    loadRecipes();
 }
 
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
 
-loadRecipes()
+loadRecipes();
